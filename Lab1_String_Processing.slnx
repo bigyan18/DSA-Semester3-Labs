@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Project Path="Lab1_String_Array/Lab1_String_Array.vcxproj" Id="a8420f2b-71a1-423c-b65b-273e676c2f36" />
+  <Project Path="Lab1_String_CStyle/Lab1_String_CStyle.vcxproj" Id="427c409b-c83b-45c6-8dff-f1a340afde93" />
+  <Project Path="Lab1_String_File/Lab1_String_File.vcxproj" Id="099d1bb6-f842-4653-992a-3446a3ae8e4a" />
+</Solution>
