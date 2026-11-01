@@ -1,12 +1,37 @@
 #include <iostream>
 #include <cctype>
+#include <cstdio>
+
+using namespace std;
 
 int main() {
     const int MAX = 1000;
     char str[MAX];
+    int i = 0;
+    int ch;
 
-    std::cout << "Enter string: ";
-    std::cin.getline(str, MAX);
+    cout << "Enter string: ";
+
+    // Read until the user types \0
+    while (i < MAX - 1) {
+        ch = getchar();
+        if (ch == EOF) break;
+
+        if (ch == '\\') {
+            int next = getchar();
+            if (next == '0') break;
+            str[i++] = '\\';
+            if (next != '\n' && next != EOF && i < MAX - 1)
+                str[i++] = next;
+        }
+        else if (ch == '\n') {
+            continue;// ignores enter
+        }
+        else {
+            str[i++] = ch;
+        }
+    }
+    str[i] = '\0';// now it is a proper C-string
 
     int sum = 0;
     int count = 0;
@@ -14,65 +39,60 @@ int main() {
 
     while (*p != '\0') {
         if (isdigit(*p)) {
-            int number = 0;
-            while (isdigit(*p)) {
-                number = number * 10 + (*p - '0');
-                p++;
-            }
-            sum += number;
+            sum += *p - '0';
             count++;
         }
-        else {
-            p++;
-        }
+        p++;
     }
-
-    // Go to the end of the string
-    p = str;
-    while (*p != '\0') p++;
-
-    // Append &sum&count
     *p++ = '&';
 
-    // write sum
     if (sum == 0) {
         *p++ = '0';
     }
     else {
-        char temp[20];
-        int t = 0;
-        int s = sum;
-        while (s > 0) {
-            temp[t++] = (s % 10) + '0';
-            s /= 10;
+        char* start = p;
+        while (sum > 0) {
+            *p++ = (sum % 10) + '0';
+            sum /= 10;
         }
-        for (int j = t - 1; j >= 0; j--) {
-            *p++ = temp[j];
+        // reverse the digits we just wrote
+        char* left = start;
+        char* right = p - 1;
+        while (left < right) {
+            char tmp = *left;
+            *left = *right;
+            *right = tmp;
+            left++;
+            right--;
         }
     }
 
     *p++ = '&';
 
-    // write count
+    // Append count
     if (count == 0) {
         *p++ = '0';
     }
     else {
-        char temp[20];
-        int t = 0;
-        int c = count;
-        while (c > 0) {
-            temp[t++] = (c % 10) + '0';
-            c /= 10;
+        char* start = p;
+        while (count > 0) {
+            *p++ = (count % 10) + '0';
+            count /= 10;
         }
-        for (int j = t - 1; j >= 0; j--) {
-            *p++ = temp[j];
+        // reverse
+        char* left = start;
+        char* right = p - 1;
+        while (left < right) {
+            char tmp = *left;
+            *left = *right;
+            *right = tmp;
+            left++;
+            right--;
         }
     }
 
-    *p = '\0';
+    *p = '\0';// terminate the modified C-string
 
-    std::cout << "Result: " << str << std::endl;
-
+    cout << "Result: " << str << endl;
     return 0;
 }

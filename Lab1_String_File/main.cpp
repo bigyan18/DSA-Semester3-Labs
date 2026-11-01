@@ -7,42 +7,33 @@ int main() {
     const int MAX = 1000;
     char str[MAX];
 
-    // Read from file1.txt
+    //Read from file1.txt
     FILE* in = fopen("file1.txt", "r");
     if (!in) {
         std::cout << "Cannot open file1.txt\n";
         return 1;
     }
-    fgets(str, MAX, in);
+    if (fgets(str, MAX, in) == nullptr) {
+        std::cout << "File is empty or read error\n";
+        fclose(in);
+        return 1;
+    }
     fclose(in);
 
-    // Remove possible newline
-    int i = 0;
-    while (str[i] != '\0') {
+    for (int i = 0; str[i] != '\0'; i++) {
         if (str[i] == '\n') {
             str[i] = '\0';
             break;
         }
-        i++;
     }
 
-    // ===== Same processing as Program 1 =====
+   
     int sum = 0;
     int count = 0;
-    i = 0;
-
-    while (str[i] != '\0') {
+    for (int i = 0; str[i] != '\0'; i++) {
         if (isdigit(str[i])) {
-            int number = 0;
-            while (isdigit(str[i])) {
-                number = number * 10 + (str[i] - '0');
-                i++;
-            }
-            sum += number;
+            sum += str[i] - '0';
             count++;
-        }
-        else {
-            i++;
         }
     }
 
@@ -51,45 +42,53 @@ int main() {
 
     str[len++] = '&';
 
-    // sum
     if (sum == 0) {
         str[len++] = '0';
     }
     else {
-        char temp[20];
-        int t = 0;
-        int s = sum;
-        while (s > 0) {
-            temp[t++] = (s % 10) + '0';
-            s /= 10;
+        int start = len;
+        while (sum > 0) {
+            str[len++] = (sum % 10) + '0';
+            sum /= 10;
         }
-        for (int j = t - 1; j >= 0; j--) {
-            str[len++] = temp[j];
+        int left = start;
+        int right = len - 1;
+        while (left < right) {
+            char tmp = str[left];
+            str[left] = str[right];
+            str[right] = tmp;
+            left++;
+            right--;
         }
     }
 
+
     str[len++] = '&';
 
-    // count
     if (count == 0) {
         str[len++] = '0';
     }
     else {
-        char temp[20];
-        int t = 0;
-        int c = count;
-        while (c > 0) {
-            temp[t++] = (c % 10) + '0';
-            c /= 10;
+        int start = len;
+        while (count > 0) {
+            str[len++] = (count % 10) + '0';
+            count /= 10;
         }
-        for (int j = t - 1; j >= 0; j--) {
-            str[len++] = temp[j];
+
+        int left = start;
+        int right = len - 1;
+        while (left < right) {
+            char tmp = str[left];
+            str[left] = str[right];
+            str[right] = tmp;
+            left++;
+            right--;
         }
     }
 
     str[len] = '\0';
 
-    // Write result to file2.txt
+    //Write to file2.txt
     FILE* out = fopen("file2.txt", "w");
     if (!out) {
         std::cout << "Cannot open file2.txt\n";

@@ -4,77 +4,95 @@
 int main() {
     const int MAX = 1000;
     char str[MAX];
+    int i = 0;
+    int ch;
 
     std::cout << "Enter string: ";
-    std::cin.getline(str, MAX);
 
-    int i = 0;
-    int sum = 0;
-    int count = 0;
+    while (i < MAX - 1) {
+        ch = std::cin.get();
 
-    // Find all groups of digits
-    while (str[i] != '\0') {
-        if (isdigit(str[i])) {
-            int number = 0;
-            while (isdigit(str[i])) {
-                number = number * 10 + (str[i] - '0');
-                i++;
+        if (ch == EOF) break;
+
+       
+        if (ch == '\\') {
+            int next = std::cin.get();
+            if (next == '0') {
+                break; 
             }
-            sum += number;
-            count++;
+            else {
+                str[i++] = '\\';
+                if (next != EOF && i < MAX - 1) {
+                    str[i++] = next;
+                }
+            }
+        }
+        else if (ch == '\n') {
+            continue;
         }
         else {
-            i++;
+            str[i++] = ch;
         }
     }
 
-    // Find the end of the original string
-    int len = 0;
-    while (str[len] != '\0') len++;
+    str[i] = '\0';
 
-    // Append results: &sum&count
-    str[len++] = '&';
+    int sum = 0;
+    int count = 0;
+    for (int j = 0; str[j] != '\0'; j++) {
+        if (std::isdigit(str[j])) {
+            sum += str[j] - '0';
+            count++;
+        }
+    }
 
-    // Convert sum to characters
+    int pos = 0;
+    while (str[pos] != '\0') pos++;
+
+    str[pos++] = '&';
+
     if (sum == 0) {
-        str[len++] = '0';
+        str[pos++] = '0';
     }
     else {
-        char temp[20];
-        int t = 0;
-        int s = sum;
-        while (s > 0) {
-            temp[t++] = (s % 10) + '0';
-            s /= 10;
+        int start = pos;
+        while (sum > 0) {
+            str[pos++] = (sum % 10) + '0';
+            sum /= 10;
+        }
+        int left = start, right = pos - 1;
+        while (left < right) {
+            char tmp = str[left];
+            str[left] = str[right];
+            str[right] = tmp;
+            left++; right--;
+        }
+    }
+
+    str[pos++] = '&';
+
+    // write count
+    if (count == 0) {
+        str[pos++] = '0';
+    }
+    else {
+        int start = pos;
+        while (count > 0) {
+            str[pos++] = (count % 10) + '0';
+            count /= 10;
         }
         // reverse
-        for (int j = t - 1; j >= 0; j--) {
-            str[len++] = temp[j];
+        int left = start, right = pos - 1;
+        while (left < right) {
+            char tmp = str[left];
+            str[left] = str[right];
+            str[right] = tmp;
+            left++; right--;
         }
     }
 
-    str[len++] = '&';
-
-    // Convert count to characters
-    if (count == 0) {
-        str[len++] = '0';
-    }
-    else {
-        char temp[20];
-        int t = 0;
-        int c = count;
-        while (c > 0) {
-            temp[t++] = (c % 10) + '0';
-            c /= 10;
-        }
-        for (int j = t - 1; j >= 0; j--) {
-            str[len++] = temp[j];
-        }
-    }
-
-    str[len] = '\0';
+    str[pos] = '\0';
 
     std::cout << "Result: " << str << std::endl;
-
     return 0;
 }
